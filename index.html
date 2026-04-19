@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate Generator Pro</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* 🔥 Gradient Background */
+    background: linear-gradient(135deg, #1e3a8a, #9333ea, #ec4899);
+    color: #fff;
+}
+
+.container {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 15px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+input, select {
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    width:80%;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 🔥 Stylish Button */
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 5px 20px rgba(37,99,235,0.5);
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.download-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+canvas {
+    margin-top: 20px;
+    width: 100%;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🎖 Weekly Certificate</h2>
+
+    <input type="text" id="uName" placeholder="Enter Name">
+
+    <!-- 🔥 Level Input -->
+    <select id="uLevel">
+        <option value="">Select Level</option>
+        <option>Distributor</option>
+        <option>Senior Distributor</option>
+        <option>Assistant Bronze Director</option>
+        <option>Bronze Director</option>
+        <option>Silver Director</option>
+        <option>Gold Director</option>
+        <option>Star Director</option>
+        <option>Diamond Director</option>
+        <option>Crown Director</option>
+        <option>Universal Crown Director</option>
+        <option>Double Crown Director</option>
+        <option>Double Universal Crown Director</option>
+
+    </select>
+
+    <input type="date" id="uDate">
+
+    <input type="file" id="uPhoto" accept="image/*">
+
+    <button onclick="generateBanner()">✨ Generate</button>
+
+    <canvas id="canvas"></canvas>
+
+    <button class="download-btn" onclick="downloadImage()">⬇ Download</button>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const BG_IMAGE = "weekly.jpg";
+
+/* ✅ Layout */
+const LAYOUT = {
+    photo: { x: 325, y: 450, w: 267, h: 454 },
+
+    name: { x: 460, y: 950, font: "bold 36px Arial", color: "#000" },
+
+    level: { x: 460, y: 1000, font: "bold 28px Arial", color: "#444" },
+
+    /* 🔥 Bigger Date */
+    date: { x: 650, y: 1080, font: "bold 36px Arial", color: "#000" }
+};
+
+function generateBanner() {
+    const name = document.getElementById("uName").value;
+    const level = document.getElementById("uLevel").value;
+    const dateInput = document.getElementById("uDate").value;
+    const photoFile = document.getElementById("uPhoto").files[0];
+
+    if (!name || !level || !dateInput || !photoFile) {
+        alert("Fill all fields!");
+        return;
+    }
+
+    const bg = new Image();
+    bg.src = BG_IMAGE;
+
+    bg.onload = function () {
+        canvas.width = bg.width;
+        canvas.height = bg.height;
+
+        ctx.drawImage(bg, 0, 0);
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const userImg = new Image();
+            userImg.src = e.target.result;
+
+            userImg.onload = function () {
+
+                /* 📷 PHOTO */
+                ctx.drawImage(
+                    userImg,
+                    LAYOUT.photo.x,
+                    LAYOUT.photo.y,
+                    LAYOUT.photo.w,
+                    LAYOUT.photo.h
+                );
+
+                /* 📝 NAME */
+                ctx.font = LAYOUT.name.font;
+                ctx.fillStyle = LAYOUT.name.color;
+                ctx.textAlign = "center";
+                ctx.fillText(name.toUpperCase(), LAYOUT.name.x, LAYOUT.name.y);
+
+                /* 🏆 LEVEL */
+                ctx.font = LAYOUT.level.font;
+                ctx.fillStyle = LAYOUT.level.color;
+                ctx.fillText(level.toUpperCase(), LAYOUT.level.x, LAYOUT.level.y);
+
+                /* 📅 DATE */
+                const formattedDate = new Date(dateInput).toLocaleDateString("en-GB");
+
+                ctx.font = LAYOUT.date.font;
+                ctx.fillStyle = LAYOUT.date.color;
+                ctx.fillText(formattedDate, LAYOUT.date.x, LAYOUT.date.y);
+            };
+        };
+        reader.readAsDataURL(photoFile);
+    };
+}
+
+/* ⬇ Download */
+function downloadImage() {
+    const link = document.createElement("a");
+    link.download = "certificate.png";
+    link.href = canvas.toDataURL();
+    link.click();
+}
+</script>
+
+</body>
+</html>
