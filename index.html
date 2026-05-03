@@ -82,7 +82,7 @@ canvas {
 
     <input type="text" id="uName" placeholder="Enter Name">
     <input type="text" id="uId" placeholder="Enter the no of IDs">
-    
+
 
     <select id="uLevel">
         <option value="">Select Level</option>
@@ -186,7 +186,10 @@ function generateBanner() {
 
                 /* 📅 DATE */
                 const date = new Date(dateInput);
-                const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const formattedDate = `${day}/${month}/${year}`;
                 ctx.font = LAYOUT.date.font;
                 ctx.fillStyle = LAYOUT.date.color;
                 ctx.textAlign = "center";
